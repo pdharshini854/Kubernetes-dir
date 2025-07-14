@@ -1,0 +1,147 @@
+Kubernetes Cluster & Nodegroup Setup:
+
+Step 1: Install following tools to setup and manage kubernetes cluster on AWS
+    • eksctl         --     Creates and manages the EKS cluster resources on AWS.
+    • aws CLI     --     Authenticates and manages AWS credentials, networking, IAM, etc. 
+    • kubectl      --      Interacts with the Kubernetes cluster after it's up.
+
+Step 2: Associate an IAM OIDC identity provider with your EKS cluster . Run,
+
+               eksctl utils associate-iam-oidc-provider \
+                       --region ap-southeast-2 \
+                       --cluster eksdemo \
+                        --approve
+ 
+
+
+step 3: Create Keypair in AWS console
+
+          
+
+Step 4: Create Kubernetes cluster 
+
+    • Run below commands from local .
+        
+          eksctl create cluster --name=eksdemo \
+                            --region=ap-southeast-2 \
+                            --zones=ap-southeast-2a,ap-southeast-2b \
+                            --without-nodegroup
+      
+    • To check cluster is created succesfully run,
+                   
+               eksctl get cluster
+
+
+
+
+       
+
+Step 5: Create Nodegroup
+
+    • Run the command after successfull creation of cluster (Creates Node Group in private subnet)
+
+              eksctl create nodegroup --cluster=eksdemo \
+                        --region=ap-southeast-2 \
+                        --name=eksdemo-ng-private2 \
+                        --node-type=t3.medium \
+                        --nodes-min=2 \
+                        --nodes-max=2 \
+                        --node-volume-size=20 \
+                        --ssh-access \
+                        --ssh-public-key=ekskey \
+                        --managed \
+                        --asg-access \
+                        --external-dns-access \
+                        --full-ecr-access \
+                        --appmesh-access \
+                        --alb-ingress-access \
+                        --node-private-networking
+
+
+    • To check node group created successfully , run ,
+      
+                    eksctl get nodegroup --cluster=eksdemo –region=ap-southeast-2
+
+
+
+    • To get list of nodes . Run,
+       
+                    kubectl get nodes -o wide
+   
+
+    • Go to AWS console -> Elastic Kubernetes Services -> Clusters -> eksdemo(your cluster name) -> compute  . verify nodegroup and nodes are created.
+    • Check Associated VPC,EC2 instances and subnets of EC2 instances ,IAM Role created as expected.
+
+
+
+
+No we have a Kubernetes cluster, Nodegroup and Nodes created. 
+
+
+Pod Creation :
+
+    • To create a pod for nginx go to the file path and run ,
+               
+       kubectl apply -f nginx-pod.yaml  
+
+
+
+      
+
+
+
+    • To check pod details , run
+       
+             kubectl get pod -o wide
+
+
+ReplicaSet Creation:
+
+    • Command : kubectl apply -f replicast-definition.yml
+
+       						
+      
+    • Command to check the pods are created ,
+  
+                         kubectl get pod -o wide
+
+             																																																																	
+Namespace Creation:		
+
+    • Command : kubectl apply -f ns.yml
+
+
+
+      
+      
+      
+    • Command to check the created Namespace : kubectl get ns 
+
+       
+																										            Creating a pod in specific Namespace:
+
+    • Command : kubectl apply -f nspod.yml
+
+
+      
+      
+      
+      
+
+
+
+
+
+
+
+
+
+    • Command to check pods running in all name spaces : kubectl get pod –all-namespaces
+    • Comand to check pods created in “project1” namespace : kebectl get pod –namespace= project1
+           
+      
+                                          
+
+NodePort Creation:
+
+    • Command: 

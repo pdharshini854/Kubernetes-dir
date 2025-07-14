@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  namespace: project1    # 👈 specify the target namespace here
+spec:
+  containers:
+  - name: nginx
+    image: nginx

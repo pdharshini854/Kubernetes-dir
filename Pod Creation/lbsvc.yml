@@ -1,12 +1,12 @@
+# Create a Loadbalancer
 apiVersion: v1
 kind: Service
 metadata:
   name: my-service
-  namespace: project1
 spec:
   selector:
     app: nginx
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: 80
   type: LoadBalancer

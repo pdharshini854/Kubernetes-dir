@@ -1,7 +1,10 @@
+#Create Nginx-server 
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx-public
+  name: nginx-private
+  labels:
+    app: nginx
 spec:
   containers:
   - name: nginx
